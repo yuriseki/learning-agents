@@ -1,0 +1,8 @@
+# Shared dependencies for Learning AI Agents blog series
+# Install: pip install -r requirements.txt
+
+# OpenAI-compatible API client (works with llama.cpp, Ollama, etc.)
+openai>=1.0.0
+
+# DuckDuckGo search (replaces deprecated duckduckgo-search)
+ddgs>=9.0.0

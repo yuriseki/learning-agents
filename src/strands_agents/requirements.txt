@@ -1,0 +1,9 @@
+# strands_agents package dependencies
+# Install: pip install -r requirements.txt
+
+# Note: Also install shared dependencies first:
+#   pip install -r ../shared/requirements.txt
+
+# Strands Agents framework
+strands-agents>=1.34.0
+strands-agents-tools>=1.34.0
