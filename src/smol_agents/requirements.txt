@@ -1,0 +1,8 @@
+# learning_smolagents package dependencies
+# Install: pip install -r requirements.txt
+
+# Note: Also install shared dependencies first:
+#   pip install -r ../shared/requirements.txt
+
+# Smolagents framework
+smolagents[litellm]>=1.17.0

@@ -1,0 +1,11 @@
+# learning_langgraph package dependencies
+# Install: pip install -r requirements.txt
+
+# Note: Also install shared dependencies first:
+#   pip install -r ../shared/requirements.txt
+
+# LangGraph framework
+langgraph>=0.4.0
+langchain-openai>=0.3.0
+langchain-core>=0.3.0
+langgraph-checkpoint>=4.0.0
