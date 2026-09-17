@@ -6,3 +6,6 @@ openai>=1.0.0
 
 # DuckDuckGo search (replaces deprecated duckduckgo-search)
 ddgs>=9.0.0
+
+# Loads .env from the project root (imported by config.py when .env exists)
+python-dotenv>=1.0.0

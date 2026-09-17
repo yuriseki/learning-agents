@@ -1,0 +1,4 @@
+# uv supplies Python 3.12 (the web image ships 3.13) and fast dependency installs.
+# Python builds and the package cache live in the ddev-global-cache volume at
+# runtime (see UV_* in config.yaml), so nothing Python-specific is baked in here.
+COPY --from=ghcr.io/astral-sh/uv:0.9.24 /uv /uvx /usr/local/bin/

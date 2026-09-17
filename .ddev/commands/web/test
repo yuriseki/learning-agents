@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+## Description: Run a framework's verification script, or all of them
+## Usage: test [framework|all]
+## Example: "ddev test smol" or "ddev test all"
+
+set -uo pipefail
+source /mnt/ddev_config/scripts/lib.sh
+cd "$PROJECT_ROOT"
+
+# Every package with a test.py, including src/shared.
+all_packages() {
+  local f
+  for f in src/*/test.py; do
+    basename "$(dirname "$f")"
+  done
+}
+
+case "${1:-all}" in
+  all) packages=$(all_packages) ;;
+  *)   packages=$(resolve_framework "$1") || exit 1 ;;
+esac
+
+failed=()
+for pkg in $packages; do
+  echo
+  echo "════════ $pkg ════════"
+  "$(venv_for "$pkg")/bin/python" "src/$pkg/test.py" || failed+=("$pkg")
+done
+
+echo
+if [[ ${#failed[@]} -gt 0 ]]; then
+  echo "FAILED: ${failed[*]}"
+  exit 1
+fi
+echo "All tests passed."
