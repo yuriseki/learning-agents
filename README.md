@@ -115,6 +115,40 @@ Set via environment variables (defaults shown):
 | `LLM_API_KEY` | `not-needed` | API key |
 | `LLM_TEMPERATURE` | `0.7` | Sampling temperature |
 
+#### Using OpenAI API
+
+To use OpenAI's cloud API instead of a local model:
+
+```bash
+export LLM_BASE_URL="https://api.openai.com/v1"
+export LLM_MODEL="gpt-4o"
+export LLM_API_KEY="sk-proj-your-key-here"
+```
+
+Or add to a `.env` file:
+
+```bash
+cat > .env << 'EOF'
+LLM_BASE_URL=https://api.openai.com/v1
+LLM_MODEL=gpt-4o
+LLM_API_KEY=sk-proj-your-key-here
+LLM_TEMPERATURE=0.7
+EOF
+
+# Load it
+set -a && source .env && set +a
+```
+
+Works with any OpenAI-compatible provider (Azure, Together, Perplexity, etc.) by changing `LLM_BASE_URL` and `LLM_MODEL`.
+
+#### Using Local llama.cpp (default)
+
+```bash
+export LLM_BASE_URL="http://localhost:8124/v1"
+export LLM_MODEL="Qwen3.8-27B-UD-Q3_K_XL.gguf"
+export LLM_API_KEY="not-needed"
+```
+
 ## Key Findings
 
 ### What Each Framework Teaches

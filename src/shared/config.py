@@ -17,7 +17,17 @@ Environment Variables:
 """
 
 import os
+from pathlib import Path
 from typing import Any
+
+# ─────────────────────────────────────────────
+# Auto-load .env from project root
+# ─────────────────────────────────────────────
+_project_root = Path(__file__).resolve().parent.parent.parent
+_env_path = _project_root / ".env"
+if _env_path.exists():
+    from dotenv import load_dotenv
+    load_dotenv(_env_path)
 
 
 # ─────────────────────────────────────────────
@@ -89,14 +99,19 @@ def get_llm_extra_body() -> dict[str, Any]:
     """Get extra body parameters for the LLM API call.
 
     Reasoning models (Qwen3.8, etc.) require `enable_thinking: False` to avoid
-    empty responses. Override with LLM_DISABLE_THINKING environment variable.
+    empty responses. Only applies to local llama.cpp models.
+
+    Override with LLM_DISABLE_THINKING environment variable.
 
     Returns:
-        Dict of extra parameters (default: disables thinking mode).
+        Dict of extra parameters (empty for OpenAI API).
     """
-    disable_thinking = os.environ.get("LLM_DISABLE_THINKING", "true").lower() == "true"
-    if disable_thinking:
-        return {"chat_template_kwargs": {"enable_thinking": False}}
+    base_url = get_llm_base_url()
+    # Only include llama.cpp-specific params for local models
+    if "localhost" in base_url or "172.17.0.1" in base_url:
+        disable_thinking = os.environ.get("LLM_DISABLE_THINKING", "true").lower() == "true"
+        if disable_thinking:
+            return {"chat_template_kwargs": {"enable_thinking": False}}
     return {}
 
 
