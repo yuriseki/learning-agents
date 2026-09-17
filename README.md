@@ -75,6 +75,21 @@ PYTHONPATH=src/ .venv/bin/python src/crewai_agents/test.py
 cd src/ag2_agents && .venv/bin/python test.py
 ```
 
+### DDEV
+
+Alternatively, run everything inside a [DDEV](https://ddev.com) container. No local Python or `uv` needed: the container provisions Python 3.12 and both venvs on first start.
+
+```bash
+ddev start                        # build image, create venvs, install all deps (idempotent)
+ddev agent strands "Your topic"   # run a framework; short or full package name
+ddev agent ag2 "Your problem"
+ddev test all                     # or a single one: ddev test smol
+ddev ssh                          # shell with the shared venv already activated
+ddev setup --force                # rebuild the venvs from scratch
+```
+
+`localhost:8124` inside the container is forwarded to the host, so a local llama.cpp server works unchanged as long as it listens on all interfaces (`llama-server --host 0.0.0.0 ...`). `.env` is picked up as usual. Container venvs live in `.ddev/.venv` and `.ddev/.venv-ag2`, separate from the host venvs.
+
 ## Architecture
 
 Each package follows the same structure:

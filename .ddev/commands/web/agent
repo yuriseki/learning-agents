@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+## Description: Run a framework's research pipeline
+## Usage: agent <framework> [topic]
+## Example: "ddev agent strands 'Python 3.14 release'" or "ddev agent pydantic"
+
+set -euo pipefail
+source /mnt/ddev_config/scripts/lib.sh
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: ddev agent <framework> [topic]" >&2
+  echo "Frameworks: $(frameworks | tr '\n' ' ')" >&2
+  exit 1
+fi
+
+pkg="$(resolve_framework "$1")"
+shift
+cd "$PROJECT_ROOT"
+exec "$(venv_for "$pkg")/bin/python" "src/$pkg/main.py" "$@"

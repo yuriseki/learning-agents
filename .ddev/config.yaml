@@ -1,0 +1,30 @@
+name: learning-agents
+type: generic
+docroot: ""
+
+# Pure-Python CLI project: nothing to serve and no database, so no webserver or db container.
+# Python 3.12 and the two venvs are provisioned by `ddev setup` (run automatically on start).
+webserver_type: generic
+omit_containers: [db]
+
+# Forward localhost:8124 inside the container to the llama.cpp server on the host, so the
+# frameworks reach it at the same address they use outside DDEV (AG2 hardcodes it).
+# Change both port numbers if your server listens elsewhere.
+webimage_extra_packages: [socat]
+web_extra_daemons:
+  - name: llm-proxy
+    command: "socat TCP-LISTEN:8124,bind=127.0.0.1,fork,reuseaddr TCP:host.docker.internal:8124"
+    directory: /var/www/html
+
+web_environment:
+  - PYTHONPATH=/var/www/html/src
+  # uv keeps Python builds and its package cache in DDEV's persistent global cache volume.
+  - UV_PYTHON_INSTALL_DIR=/mnt/ddev-global-cache/uv/python
+  - UV_CACHE_DIR=/mnt/ddev-global-cache/uv/cache
+  # The venvs live on a bind mount, where hardlinks from the cache aren't possible.
+  - UV_LINK_MODE=copy
+
+hooks:
+  post-start:
+    # Idempotent: a no-op unless a requirements.txt changed. See .ddev/commands/web/setup.
+    - exec: /mnt/ddev_config/commands/web/setup

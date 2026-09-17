@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+## Description: Create the Python virtualenvs and install all framework dependencies
+## Usage: setup [--force]
+## Example: "ddev setup" or "ddev setup --force"
+
+set -euo pipefail
+source /mnt/ddev_config/scripts/lib.sh
+cd "$PROJECT_ROOT"
+
+FORCE=0
+[[ "${1:-}" == "--force" ]] && FORCE=1
+
+# Fingerprint everything that feeds the venvs so repeated `ddev start`s are a no-op.
+STAMP="$VENV_MAIN/.ddev-stamp"
+CURRENT="$( { echo "python-$PYTHON_VERSION"; cat requirements.txt src/*/requirements.txt; } | sha256sum | cut -d' ' -f1)"
+if [[ $FORCE -eq 0 && -f "$STAMP" && "$(cat "$STAMP")" == "$CURRENT" \
+      && -x "$VENV_MAIN/bin/python" && -x "$VENV_AG2/bin/python" ]]; then
+  echo "Virtualenvs are up to date (run 'ddev setup --force' to rebuild)."
+  exit 0
+fi
+
+echo "==> Installing Python $PYTHON_VERSION (uv-managed, cached in ddev-global-cache)"
+"$UV" python install "$PYTHON_VERSION"
+
+# `uv venv --clear` replaces an existing venv, so this is a clean rebuild whenever
+# requirements change. Installs are fast because the package cache persists.
+echo "==> Shared venv (all frameworks except AG2): $VENV_MAIN"
+"$UV" venv --clear --python "$PYTHON_VERSION" "$VENV_MAIN"
+"$UV" pip install --python "$VENV_MAIN/bin/python" -r requirements.txt
+
+# AG2 needs openai>=3.0 while the other frameworks need openai<3.0, so it gets its own venv.
+echo "==> AG2 venv: $VENV_AG2"
+"$UV" venv --clear --python "$PYTHON_VERSION" "$VENV_AG2"
+"$UV" pip install --python "$VENV_AG2/bin/python" \
+  -r src/shared/requirements.txt \
+  -r src/ag2_agents/requirements.txt
+
+echo "$CURRENT" > "$STAMP"
+echo "==> Done. Try: ddev test all"
