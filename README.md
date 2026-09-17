@@ -33,15 +33,8 @@ Hands-on experiments with 7 major agentic frameworks, each implementing the same
 uv venv .venv --python 3.12
 source .venv/bin/activate
 
-# Install shared dependencies
-pip install -r src/shared/requirements.txt
-
-# Install framework dependencies
-pip install -r src/strands_agents/requirements.txt
-pip install -r src/smol_agents/requirements.txt
-pip install -r src/crewai_agents/requirements.txt
-pip install -r src/langgraph_agents/requirements.txt
-pip install -r src/pydantic_agents/requirements.txt
+# Install all framework dependencies (single file)
+pip install -r requirements.txt
 
 # AG2 needs its own venv (dependency conflicts)
 cd src/ag2_agents
@@ -49,6 +42,8 @@ uv venv .venv --python 3.12
 .venv/bin/pip install "ag2[openai]" openai ddgs
 cd ../..
 ```
+
+> **Note**: `requirements.txt` installs all 6 frameworks into a single venv. AG2 is excluded because it requires `openai>=3.0`, while other frameworks need `openai<3.0`.
 
 ### Run
 

@@ -1,0 +1,19 @@
+# Core LLM client
+openai>=1.0.0,<4.0.0
+
+# Frameworks
+crewai>=1.15.0
+strands-agents>=1.50.0
+smolagents>=1.20.0
+langgraph>=1.2.0
+pydantic-ai>=2.30.0
+
+# Search
+ddgs>=9.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+tiktoken>=0.12.0
+
+# Note: AG2 (ag2_agents) requires its own isolated venv due to openai>=3.0 vs <3.0 conflicts.
+# See src/ag2_agents/README.md or the main README for setup instructions.
